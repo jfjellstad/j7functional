@@ -46,13 +46,13 @@ public class TestListFunctionBuilder1 {
     public void mapAndReduction() {
         Integer expected = 6;
 
-        Function1<Integer, String> TO_INT = new Function1<Integer, String>() {
+        Function1<Integer, String> STRING_TO_INT = new Function1<Integer, String>() {
             @Override
             public Integer apply(String input) {
                 return Integer.valueOf(input);
             }
         };
-        Function1<String, Integer> TO_STRING = new Function1<String, Integer>() {
+        Function1<String, Integer> INTEGER_TO_STRING = new Function1<String, Integer>() {
             @Override
             public String apply(Integer input) {
                 return input.toString();
@@ -67,7 +67,12 @@ public class TestListFunctionBuilder1 {
 
         List<Double> list = newArrayList(1.54, 2.2342, 3.4565);
 
-        Integer result = create(list).map(DOUBLE_TO_INT).map(TO_STRING).map(PRINTER).map(TO_INT).reduce(PLUS, 0);
+        Integer result = create(list)
+                .map(DOUBLE_TO_INT)
+                .map(INTEGER_TO_STRING)
+                .map(PRINTER)
+                .map(STRING_TO_INT)
+                .reduce(PLUS, 0);
 
         assertEquals(expected, result);
     }
