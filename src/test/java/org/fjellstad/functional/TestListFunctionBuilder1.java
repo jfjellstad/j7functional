@@ -5,11 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.fjellstad.functional.ListFunctionBuilder1.create;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class TestListFunctionBuilder1 {
 
@@ -32,10 +34,7 @@ public class TestListFunctionBuilder1 {
     public void reduceShouldReturnCorrectedValue() {
         int expected = 6;
 
-        List<Integer> input = new ArrayList<>();
-        input.add(1);
-        input.add(2);
-        input.add(3);
+        List<Integer> input = newArrayList(1,2,3);
 
         ListFunctionBuilder1<Integer, Integer> listBuilder = create(input);
         int result = listBuilder.reduce(PLUS, 0);
@@ -110,5 +109,33 @@ public class TestListFunctionBuilder1 {
         LOG.info(result.toString());
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldRemoveDuplicates() {
+        List<Integer> expected = newArrayList(1,2,3,4);
+
+        List<Integer> list = newArrayList(1, 2, 2, 3, 4, 3);
+
+        List<Integer> result = create(list).unique().get();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldSortCorrectly() {
+        List<Integer> expected = newArrayList(1,2,3,4);
+        Comparator<Integer> COMP = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        };
+
+        List<Integer> list = newArrayList(1,4,3,2);
+        List<Integer> result = create(list).sort(COMP).get();
+
+        assertEquals(expected, result);
+        assertNotEquals(list, result);
     }
 }

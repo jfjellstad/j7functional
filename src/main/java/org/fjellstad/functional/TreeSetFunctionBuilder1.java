@@ -11,22 +11,22 @@ public class TreeSetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuild
 
     @Override
     public <NEXT_OUT> TreeSetFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(Function1<NEXT_OUT, IN> func) {
-        return new TreeSetFunctionBuilder1<>(Functional.forEach(set, func));
+        return create(Functional.forEach(set, func));
     }
 
     @Override
     public OUT reduce(Function2<OUT, OUT, IN> func, OUT initialValue) {
-        return Functional.reduce(set,func, initialValue);
+        return Functional.reduce(set, func, initialValue);
     }
 
     @Override
     public TreeSetFunctionBuilder1<IN, IN> filter(Predicate<IN> predicate) {
-        return new TreeSetFunctionBuilder1<>(Functional.filter(set, predicate));
+        return create(Functional.filter(set, predicate));
     }
 
     @Override
     public TreeSetFunctionBuilder1<IN, IN> reject(Predicate<IN> predicate) {
-        return new TreeSetFunctionBuilder1<>(Functional.reject(set, predicate));
+        return create(Functional.reject(set, predicate));
     }
 
     @Override

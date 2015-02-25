@@ -1,6 +1,5 @@
 package org.fjellstad.functional;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<OUT, IN> {
@@ -12,7 +11,7 @@ public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<
 
     @Override
     public <NEXT_OUT> SetFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(Function1<NEXT_OUT, IN> func) {
-        return new SetFunctionBuilder1<>(Functional.forEach(set, func));
+        return create(Functional.forEach(set, func));
     }
 
     @Override
@@ -22,12 +21,12 @@ public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<
 
     @Override
     public SetFunctionBuilder1<IN, IN> filter(Predicate<IN> predicate) {
-        return new SetFunctionBuilder1<>(Functional.filter(set, predicate));
+        return create(Functional.filter(set, predicate));
     }
 
     @Override
     public SetFunctionBuilder1<IN, IN> reject(Predicate<IN> predicate) {
-        return new SetFunctionBuilder1<>(Functional.reject(set, predicate));
+        return create(Functional.reject(set, predicate));
     }
 
     @Override
@@ -37,7 +36,7 @@ public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<
 
     @Override
     public Set<OUT> apply(Function1<OUT, IN> input) {
-        return Functional.forEach(set, input, new HashSet<OUT>());
+        return Functional.forEach(set, input);
     }
 
     public static <IN> SetFunctionBuilder1<IN, IN> create(Set<IN> list) {

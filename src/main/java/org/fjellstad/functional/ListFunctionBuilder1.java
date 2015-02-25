@@ -1,5 +1,7 @@
 package org.fjellstad.functional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.fjellstad.functional.Functional.forEach;
@@ -18,7 +20,7 @@ public class ListFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1
 
     @Override
     public <NEXT_OUT> ListFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(final Function1<NEXT_OUT, IN> func) {
-        return new ListFunctionBuilder1<>(forEach(list, func));
+        return create(forEach(list, func));
     }
 
     @Override
@@ -28,12 +30,20 @@ public class ListFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1
 
     @Override
     public ListFunctionBuilder1<IN, IN> filter(Predicate<IN> predicate) {
-        return new ListFunctionBuilder1<>(Functional.filter(list, predicate));
+        return create(Functional.filter(list, predicate));
     }
 
     @Override
     public ListFunctionBuilder1<IN, IN> reject(Predicate<IN> predicate) {
-        return new ListFunctionBuilder1<>(Functional.reject(list, predicate));
+        return create(Functional.reject(list, predicate));
+    }
+
+    public ListFunctionBuilder1<IN, IN> unique() {
+        return create(Functional.unique(list));
+    }
+
+    public ListFunctionBuilder1<IN, IN> sort(Comparator<IN> comparator) {
+        return create(Functional.sort(list, comparator));
     }
 
     @Override
