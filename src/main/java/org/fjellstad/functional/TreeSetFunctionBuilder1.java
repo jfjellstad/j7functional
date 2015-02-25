@@ -26,7 +26,7 @@ public class TreeSetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuild
 
     @Override
     public TreeSetFunctionBuilder1<IN, IN> reject(Predicate<IN> predicate) {
-        return null;
+        return new TreeSetFunctionBuilder1<>(Functional.reject(set, predicate));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class TreeSetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuild
 
     @Override
     public TreeSet<OUT> apply(Function1<OUT, IN> input) {
-        return null;
+        return Functional.forEach(set, input);
     }
 
     public static <IN> TreeSetFunctionBuilder1<IN, IN> create(TreeSet<IN> set) {
