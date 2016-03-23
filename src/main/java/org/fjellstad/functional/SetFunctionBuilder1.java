@@ -2,7 +2,7 @@ package org.fjellstad.functional;
 
 import java.util.Set;
 
-public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<OUT, IN> {
+public class SetFunctionBuilder1<IN, OUT> implements CollectionFunctionBuilder1<IN, OUT> {
     private Set<IN> set;
 
     public SetFunctionBuilder1(Set<IN> set) {
@@ -10,12 +10,12 @@ public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<
     }
 
     @Override
-    public <NEXT_OUT> SetFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(Function1<NEXT_OUT, IN> func) {
+    public <NEXT_OUT> SetFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(Function<IN, NEXT_OUT> func) {
         return create(Functional.forEach(set, func));
     }
 
     @Override
-    public OUT reduce(Function2<OUT, OUT, IN> func, OUT initialValue) {
+    public OUT reduce(BiFunction<OUT, IN, OUT> func, OUT initialValue) {
         return Functional.reduce(set, func, initialValue);
     }
 
@@ -35,7 +35,7 @@ public class SetFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<
     }
 
     @Override
-    public Set<OUT> apply(Function1<OUT, IN> input) {
+    public Set<OUT> apply(Function<IN, OUT> input) {
         return Functional.forEach(set, input);
     }
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import static org.fjellstad.functional.Functional.forEach;
 
-public class ListFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1<OUT, IN> {
+public class ListFunctionBuilder1<IN, OUT> implements CollectionFunctionBuilder1<IN, OUT> {
     private List<IN> list;
 
     public ListFunctionBuilder1(List<IN> list) {
@@ -13,17 +13,17 @@ public class ListFunctionBuilder1<OUT, IN> implements CollectionFunctionBuilder1
     }
 
     @Override
-    public List<OUT> apply(Function1<OUT, IN> input) {
+    public List<OUT> apply(Function<IN, OUT> input) {
         return forEach(list, input);
     }
 
     @Override
-    public <NEXT_OUT> ListFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(final Function1<NEXT_OUT, IN> func) {
+    public <NEXT_OUT> ListFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(final Function<IN, NEXT_OUT> func) {
         return create(forEach(list, func));
     }
 
     @Override
-    public OUT reduce(final Function2<OUT, OUT, IN> func, OUT initialValue) {
+    public OUT reduce(final BiFunction<OUT, IN, OUT> func, OUT initialValue) {
         return Functional.reduce(list, func, initialValue);
     }
 

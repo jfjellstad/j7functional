@@ -3,12 +3,12 @@ package org.fjellstad.functional;
 import java.util.*;
 
 public class Functional {
-    public static <S, T> List<S> forEach(final List<T> list, final Function1<S, T> func) {
-        return (List<S>)forEach(list, func, new ArrayList<S>(list.size()));
+    public static <S, T> List<T> forEach(final List<S> list, final Function<? super S, ? extends T> func) {
+        return (List<T>)forEach(list, func, new ArrayList<T>(list.size()));
     }
 
-    private static <S, T> Collection<S> forEach(final Collection<T> coll, final Function1<S, T> func, Collection<S> newCollection) {
-        for (T value : coll) {
+    private static <S, T> Collection<T> forEach(final Collection<S> coll, final Function<? super S, ? extends T> func, Collection<T> newCollection) {
+        for (S value : coll) {
             if (value != null) {
                 newCollection.add(func.apply(value));
             }
@@ -16,17 +16,17 @@ public class Functional {
         return newCollection;
     }
 
-    public static <S, T> HashSet<S> forEach(final Set<T> set, final Function1<S, T> func) {
-        return (HashSet<S>)forEach(set, func, new HashSet<S>(set.size()));
+    public static <S, T> HashSet<T> forEach(final Set<S> set, final Function<? super S, ? extends T> func) {
+        return (HashSet<T>)forEach(set, func, new HashSet<T>(set.size()));
     }
 
-    public static <S, T> TreeSet<S> forEach(final TreeSet<T> set, final Function1<S, T> func) {
-        return (TreeSet<S>)forEach(set, func, new TreeSet<S>());
+    public static <S, T> TreeSet<T> forEach(final TreeSet<S> set, final Function<? super S, ? extends T> func) {
+        return (TreeSet<T>)forEach(set, func, new TreeSet<T>());
     }
 
-    public static <S, T> S reduce(final Collection<T> coll, final Function2<S, S, T> func, S initialValue) {
-        S result = initialValue;
-        for (T value : coll) {
+    public static <S, T> T reduce(final Collection<S> coll, final BiFunction<T, S, T> func, T initialValue) {
+        T result = initialValue;
+        for (S value : coll) {
             if (value != null) {
                 result = func.apply(result, value);
             }
@@ -40,7 +40,7 @@ public class Functional {
 
     private static <T> Collection<T> filter(final Collection<T> coll, final Predicate<T> predicate, Collection<T> newCollection) {
         for (T value : coll) {
-            if (predicate.apply(value)) {
+            if (predicate.test(value)) {
                 newCollection.add(value);
             }
         }
@@ -54,7 +54,7 @@ public class Functional {
 
     private static <T> Collection<T> reject(final Collection<T> coll, final Predicate<T> predicate, Collection<T> newCollection) {
         for (T value : coll) {
-            if (!predicate.apply(value)) {
+            if (!predicate.test(value)) {
                 newCollection.add(value);
             }
         }
@@ -83,7 +83,7 @@ public class Functional {
             private final Collection<T> tmpColl = newCollection;
 
             @Override
-            public boolean apply(T input) {
+            public boolean test(T input) {
                 return input != null && !tmpColl.contains(input);
             }
         }, newCollection);

@@ -2,10 +2,10 @@ package org.fjellstad.functional;
 
 import java.util.Collection;
 
-public interface CollectionFunctionBuilder1<OUT, IN> extends Function1<Collection<OUT>, Function1<OUT,IN>> {
-    <NEXT_OUT> CollectionFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(Function1<NEXT_OUT, IN> func);
+public interface CollectionFunctionBuilder1<IN, OUT> extends Function<Function<IN, OUT>, Collection<OUT>> {
+    <NEXT_OUT> CollectionFunctionBuilder1<NEXT_OUT, NEXT_OUT> map(Function<IN, NEXT_OUT> func);
 
-    OUT reduce(Function2<OUT, OUT, IN> func, OUT initialValue);
+    OUT reduce(BiFunction<OUT, IN, OUT> func, OUT initialValue);
 
     CollectionFunctionBuilder1<IN, IN> filter(Predicate<IN> predicate);
 

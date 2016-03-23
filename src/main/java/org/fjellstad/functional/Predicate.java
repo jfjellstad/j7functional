@@ -1,5 +1,5 @@
 package org.fjellstad.functional;
 
-public interface Predicate<IN> {
-    boolean apply(IN input);
+public interface Predicate<E> {
+    boolean test(E element);
 }

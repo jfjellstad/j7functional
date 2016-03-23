@@ -4,28 +4,26 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.fest.assertions.Assertions.assertThat;
 import static org.fjellstad.functional.ListFunctionBuilder1.create;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class TestListFunctionBuilder1 {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestListFunctionBuilder1.class);
-    Function2<Integer, Integer, Integer> PLUS = new Function2<Integer, Integer, Integer>() {
+    private final Logger logger = LoggerFactory.getLogger(TestListFunctionBuilder1.class);
+    BiFunction<Integer, Integer, Integer> PLUS = new BiFunction<Integer, Integer, Integer>() {
         @Override
         public Integer apply(Integer input0, Integer input1) {
             return input0 + input1;
         }
     };
-    Function1<String, String> PRINTER = new Function1<String, String>() {
+    Function<String, String> PRINTER = new Function<String, String>() {
         @Override
         public String apply(String input) {
-            LOG.info("{}:{}", input.getClass().getSimpleName(), input);
+            logger.info("{}:{}", input.getClass().getSimpleName(), input);
             return input;
         }
     };
@@ -39,26 +37,26 @@ public class TestListFunctionBuilder1 {
         ListFunctionBuilder1<Integer, Integer> listBuilder = create(input);
         int result = listBuilder.reduce(PLUS, 0);
 
-        assertEquals(expected, result);
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
     public void mapAndReduction() {
         Integer expected = 6;
 
-        Function1<Integer, String> STRING_TO_INT = new Function1<Integer, String>() {
+        Function<String, Integer> STRING_TO_INT = new Function<String, Integer>() {
             @Override
             public Integer apply(String input) {
                 return Integer.valueOf(input);
             }
         };
-        Function1<String, Integer> INTEGER_TO_STRING = new Function1<String, Integer>() {
+        Function<Integer, String> INTEGER_TO_STRING = new Function<Integer, String>() {
             @Override
             public String apply(Integer input) {
                 return input.toString();
             }
         };
-        Function1<Integer, Double> DOUBLE_TO_INT = new Function1<Integer, Double>() {
+        Function<Double, Integer> DOUBLE_TO_INT = new Function<Double, Integer>() {
             @Override
             public Integer apply(Double input) {
                 return input.intValue();
@@ -74,7 +72,7 @@ public class TestListFunctionBuilder1 {
                 .map(STRING_TO_INT)
                 .reduce(PLUS, 0);
 
-        assertEquals(expected, result);
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -83,7 +81,7 @@ public class TestListFunctionBuilder1 {
 
         Predicate<Integer> EVENS = new Predicate<Integer>() {
             @Override
-            public boolean apply(Integer input) {
+            public boolean test(Integer input) {
                 return input != null && input % 2 == 0;
             }
         };
@@ -92,8 +90,8 @@ public class TestListFunctionBuilder1 {
 
         List<Integer> result = create(list).filter(EVENS).get();
 
-        LOG.info(result.toString());
-        assertEquals(expected, result);
+        logger.info(result.toString());
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -102,7 +100,7 @@ public class TestListFunctionBuilder1 {
 
         Predicate<Integer> EVENS = new Predicate<Integer>() {
             @Override
-            public boolean apply(Integer input) {
+            public boolean test(Integer input) {
                 return input == null || input % 2 == 0;
             }
         };
@@ -111,9 +109,9 @@ public class TestListFunctionBuilder1 {
 
         List<Integer> result = create(list).reject(EVENS).get();
 
-        LOG.info(result.toString());
+        logger.info(result.toString());
 
-        assertEquals(expected, result);
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -124,7 +122,7 @@ public class TestListFunctionBuilder1 {
 
         List<Integer> result = create(list).unique().get();
 
-        assertEquals(expected, result);
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -140,7 +138,7 @@ public class TestListFunctionBuilder1 {
         List<Integer> list = newArrayList(1,4,3,2);
         List<Integer> result = create(list).sort(COMP).get();
 
-        assertEquals(expected, result);
-        assertNotEquals(list, result);
+        assertThat(result).isEqualTo(expected);
+        assertThat(result).isNotEqualTo(list);
     }
 }

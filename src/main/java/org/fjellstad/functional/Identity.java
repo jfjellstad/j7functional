@@ -1,8 +1,8 @@
 package org.fjellstad.functional;
 
-public class Identity<IN> implements Function1<IN, IN> {
+public class Identity<E> implements Function<E, E> {
     @Override
-    public IN apply(IN input) {
-        return input;
+    public E apply(E e) {
+        return e;
     }
 }
