@@ -10,9 +10,9 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StreamBuilderTest {
+public class StreamTest {
 
-    private final Logger logger = LoggerFactory.getLogger(StreamBuilderTest.class);
+    private final Logger logger = LoggerFactory.getLogger(StreamTest.class);
 
     private Supplier<List<Integer>> IntegerSupplier = new Supplier<List<Integer>>() {
         @Override
@@ -57,7 +57,7 @@ public class StreamBuilderTest {
 
         List<Integer> list = newArrayList(1,2,3,4,5,6);
 
-        List<Integer> result = StreamBuilder.of(list).filter(EVENS).collect(IntegerSupplier);
+        List<Integer> result = Stream.of(list).filter(EVENS).collect(IntegerSupplier);
 
         logger.info(result.toString());
         assertThat(result).isNotNull().isEqualTo(expected);
@@ -82,7 +82,7 @@ public class StreamBuilderTest {
         };
 
         List<Integer> list = newArrayList(1,2,3,4,5,6);
-        List<String> result = StreamBuilder.of(list).filter(EVENS).map(INT2STR).peek(PRINTER).collect(StringSupplier);
+        List<String> result = Stream.of(list).filter(EVENS).map(INT2STR).peek(PRINTER).collect(StringSupplier);
 
         logger.info("{}", result);
         assertThat(result).isNotNull().isEqualTo(expected);
