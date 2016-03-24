@@ -1,5 +1,6 @@
 package org.fjellstad.functional;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,12 +9,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.fjellstad.functional.ListFunctionBuilder1.create;
 
 public class TestListFunctionBuilder1 {
 
     private final Logger logger = LoggerFactory.getLogger(TestListFunctionBuilder1.class);
+
     BiFunction<Integer, Integer, Integer> PLUS = new BiFunction<Integer, Integer, Integer>() {
         @Override
         public Integer apply(Integer input0, Integer input1) {
@@ -138,7 +140,9 @@ public class TestListFunctionBuilder1 {
         List<Integer> list = newArrayList(1,4,3,2);
         List<Integer> result = create(list).sort(COMP).get();
 
-        assertThat(result).isEqualTo(expected);
-        assertThat(result).isNotEqualTo(list);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result).isEqualTo(expected);
+        softly.assertThat(result).isNotEqualTo(list);
+        softly.assertAll();
     }
 }
