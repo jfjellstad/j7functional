@@ -1,5 +1,6 @@
 package org.fjellstad.functional;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 public class StreamBuilder<ORIG, NEXT> {
@@ -13,6 +14,11 @@ public class StreamBuilder<ORIG, NEXT> {
 
     public static <ORIG> StreamBuilder<ORIG, ORIG> of(Collection<ORIG> collection) {
         return new StreamBuilder<>(collection, new Identity<ORIG>());
+    }
+
+    @SafeVarargs
+    public static <ORIG> StreamBuilder<ORIG, ORIG> of(ORIG... elements) {
+        return new StreamBuilder<>(Arrays.asList(elements), new Identity<ORIG>());
     }
 
     public StreamBuilder<ORIG, NEXT> filter(final Predicate<? super NEXT> predicate) {
@@ -88,5 +94,25 @@ public class StreamBuilder<ORIG, NEXT> {
             }
         }
         return value;
+    }
+
+    public boolean allMatch(Predicate<? super NEXT> predicate) {
+        for (ORIG elem : collection) {
+            NEXT temp = original.apply(elem);
+            if (temp == null || !predicate.test(temp)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean anyMatch(Predicate<? super NEXT> predicate) {
+        for (ORIG elem : collection) {
+            NEXT temp = original.apply(elem);
+            if (temp != null && predicate.test(temp)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
