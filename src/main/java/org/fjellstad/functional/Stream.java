@@ -5,52 +5,43 @@ import java.util.Collection;
 
 public class Stream<ORIG, NEXT> {
     private final Collection<ORIG> collection;
-    private final Function<ORIG, NEXT> original;
+    private final FunctionBuilder<ORIG, NEXT> original;
 
-    public Stream(Collection<ORIG> collection, Function<ORIG, NEXT> original) {
+    public Stream(Collection<ORIG> collection, FunctionBuilder<ORIG, NEXT> original) {
         this.collection = collection;
         this.original = original;
     }
 
     public static <ORIG> Stream<ORIG, ORIG> of(Collection<ORIG> collection) {
-        return new Stream<>(collection, new Identity<ORIG>());
+        return new Stream<>(collection, new FunctionBuilder<>(new Identity<ORIG>()));
     }
 
     @SafeVarargs
     public static <ORIG> Stream<ORIG, ORIG> of(ORIG... elements) {
-        return new Stream<>(Arrays.asList(elements), new Identity<ORIG>());
+        return new Stream<>(Arrays.asList(elements), new FunctionBuilder<>(new Identity<ORIG>()));
     }
 
     public Stream<ORIG, NEXT> filter(final Predicate<? super NEXT> predicate) {
-        return new Stream<>(collection, new Function<ORIG, NEXT>() {
+        return new Stream<>(collection, original.map(new Function<NEXT, NEXT>() {
             @Override
-            public NEXT apply(ORIG arg) {
-                NEXT temp = original.apply(arg);
-                return temp != null ? predicate.test(temp) ? temp : null : null;
+            public NEXT apply(NEXT next) {
+                return predicate.test(next) ? next : null;
             }
-        });
+        }));
     }
 
     public <NNEXT> Stream<ORIG, NNEXT> map(final Function<? super NEXT, ? extends NNEXT> mapper) {
-        return new Stream<>(collection, new Function<ORIG, NNEXT>() {
-            @Override
-            public NNEXT apply(ORIG orig) {
-                NEXT temp = original.apply(orig);
-                return temp != null ? mapper.apply(temp) : null;
-            }
-        });
+        return new Stream<>(collection, original.map(mapper));
     }
 
     public Stream<ORIG, NEXT> peek(final Consumer<NEXT> consumer) {
-        return new Stream<>(collection, new Function<ORIG, NEXT>() {
+        return new Stream<>(collection, original.map(new Function<NEXT, NEXT>() {
             @Override
-            public NEXT apply(ORIG arg) {
-                NEXT temp = original.apply(arg);
-                if (temp != null)
-                    consumer.accept(temp);
-                return temp;
+            public NEXT apply(NEXT next) {
+                consumer.accept(next);
+                return next;
             }
-        });
+        }));
     }
 
     public <R extends Collection<NEXT>> R collect(Supplier<R> supplier) {
