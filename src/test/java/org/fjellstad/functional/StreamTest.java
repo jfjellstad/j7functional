@@ -9,23 +9,12 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.fjellstad.functional.Collectors.toList;
 
 public class StreamTest {
 
     private final Logger logger = LoggerFactory.getLogger(StreamTest.class);
 
-    private Supplier<List<Integer>> IntegerSupplier = new Supplier<List<Integer>>() {
-        @Override
-        public List<Integer> get() {
-            return newArrayList();
-        }
-    };
-    private Supplier<List<String>> StringSupplier = new Supplier<List<String>>() {
-        @Override
-        public List<String> get() {
-            return newArrayList();
-        }
-    };
     private Consumer<String> PRINTER = new Consumer<String>() {
         @Override
         public void accept(String input) {
@@ -57,7 +46,7 @@ public class StreamTest {
 
         List<Integer> list = newArrayList(1,2,3,4,5,6);
 
-        List<Integer> result = Stream.of(list).filter(EVENS).collect(IntegerSupplier);
+        List<Integer> result = Stream.of(list).filter(EVENS).collect(toList(Integer.class));
 
         logger.info(result.toString());
         assertThat(result).isNotNull().isEqualTo(expected);
@@ -82,7 +71,7 @@ public class StreamTest {
         };
 
         List<Integer> list = newArrayList(1,2,3,4,5,6);
-        List<String> result = Stream.of(list).filter(EVENS).map(INT2STR).peek(PRINTER).collect(StringSupplier);
+        List<String> result = Stream.of(list).filter(EVENS).map(INT2STR).peek(PRINTER).collect(toList(String.class));
 
         logger.info("{}", result);
         assertThat(result).isNotNull().isEqualTo(expected);
