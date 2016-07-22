@@ -2,23 +2,31 @@ package org.fjellstad.functional;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+
+import static org.fjellstad.utils.CollectionUtils.nullSafeCollection;
 
 public class Stream<ORIG, NEXT> {
     private final Collection<ORIG> collection;
     private final FunctionBuilder<ORIG, NEXT> original;
 
-    public Stream(Collection<ORIG> collection, FunctionBuilder<ORIG, NEXT> original) {
+    private Stream(Collection<ORIG> collection, FunctionBuilder<ORIG, NEXT> original) {
         this.collection = collection;
         this.original = original;
     }
 
     public static <ORIG> Stream<ORIG, ORIG> of(Collection<ORIG> collection) {
-        return new Stream<>(collection, new FunctionBuilder<>(new Identity<ORIG>()));
+        return new Stream<>(nullSafeCollection(collection), new FunctionBuilder<>(new Identity<ORIG>()));
     }
 
     @SafeVarargs
     public static <ORIG> Stream<ORIG, ORIG> of(ORIG... elements) {
         return new Stream<>(Arrays.asList(elements), new FunctionBuilder<>(new Identity<ORIG>()));
+    }
+
+    public static <ORIG> Stream<ORIG, ORIG> of(Enumeration<ORIG> enumeration) {
+    	return new Stream<>(Collections.list(enumeration), new FunctionBuilder<>(new Identity<ORIG>()));
     }
 
     public Stream<ORIG, NEXT> filter(final Predicate<? super NEXT> predicate) {
