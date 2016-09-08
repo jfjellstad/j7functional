@@ -57,11 +57,24 @@ public class Stream<ORIG, NEXT> {
             private long i = 0L;
             @Override
             public NEXT apply(NEXT next) {
-                if (i < maxSize) {
-                    i++;
+                if (i++ < maxSize) {
                     return next;
                 } else {
                     return null;
+                }
+            }
+        }));
+    }
+
+    public Stream<ORIG, NEXT> skip(final long n) {
+        return new Stream<>(collection, original.map(new Function<NEXT, NEXT>() {
+            private long i = 0L;
+            @Override
+            public NEXT apply(NEXT next) {
+                if (i++ < n) {
+                    return null;
+                } else {
+                    return next;
                 }
             }
         }));
