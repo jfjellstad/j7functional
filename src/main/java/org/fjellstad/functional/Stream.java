@@ -52,6 +52,21 @@ public class Stream<ORIG, NEXT> {
         }));
     }
 
+    public Stream<ORIG, NEXT> limit(final long maxSize) {
+        return new Stream<>(collection, original.map(new Function<NEXT, NEXT>() {
+            private long i = 0L;
+            @Override
+            public NEXT apply(NEXT next) {
+                if (i < maxSize) {
+                    i++;
+                    return next;
+                } else {
+                    return null;
+                }
+            }
+        }));
+    }
+
     public <R extends Collection<NEXT>> R collect(Supplier<R> supplier) {
         R coll = supplier.get();
         for (ORIG elem : collection) {
