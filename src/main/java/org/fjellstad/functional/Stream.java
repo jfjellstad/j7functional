@@ -1,9 +1,6 @@
 package org.fjellstad.functional;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.*;
 
 import static org.fjellstad.utils.CollectionUtils.nullSafeCollection;
 
@@ -11,7 +8,7 @@ public class Stream<ORIG, NEXT> {
     private final Collection<ORIG> collection;
     private final FunctionBuilder<ORIG, NEXT> original;
 
-    private Stream(Collection<ORIG> collection, FunctionBuilder<ORIG, NEXT> original) {
+    public Stream(Collection<ORIG> collection, FunctionBuilder<ORIG, NEXT> original) {
         this.collection = collection;
         this.original = original;
     }
@@ -40,6 +37,19 @@ public class Stream<ORIG, NEXT> {
 
     public <NNEXT> Stream<ORIG, NNEXT> map(final Function<? super NEXT, ? extends NNEXT> mapper) {
         return new Stream<>(collection, original.map(mapper));
+    }
+
+    public <NNEXT> Stream<NNEXT, NNEXT> flatMap(final Function<? super NEXT, ? extends Stream<NEXT, NNEXT>> mapper) {
+    	List<NNEXT> coll = new ArrayList<>();
+    	for (ORIG elem : collection) {
+    		NEXT temp = original.apply(elem);
+    		if (temp != null) {
+			    Stream<NEXT, NNEXT> s = mapper.apply(temp);
+			    List<NNEXT> collect = s.collect(Collectors.<NNEXT>toList());
+			    coll.addAll(collect);
+		    }
+	    }
+	    return new Stream<>(coll, new FunctionBuilder<>(new Identity<NNEXT>()));
     }
 
     public Stream<ORIG, NEXT> peek(final Consumer<NEXT> consumer) {
@@ -78,6 +88,18 @@ public class Stream<ORIG, NEXT> {
                 }
             }
         }));
+    }
+
+    public Stream<NEXT, NEXT> sorted(Comparator<NEXT> comparator) {
+        List<NEXT> newList = new ArrayList<>();
+        for (ORIG elem : collection) {
+        	NEXT val = original.apply(elem);
+        	if (val != null) {
+        		newList.add(val);
+	        }
+        }
+        Collections.sort(newList, comparator);
+        return new Stream<>(newList, new FunctionBuilder<>(new Identity<NEXT>()));
     }
 
     public <R extends Collection<NEXT>> R collect(Supplier<R> supplier) {
